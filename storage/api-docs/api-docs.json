@@ -1,0 +1,62 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Hotel API",
+        "description": "API documentation for the Hotel app",
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/api/hotels/all": {
+            "get": {
+                "tags": [
+                    "Hotels"
+                ],
+                "summary": "Get list of hotels",
+                "operationId": "940fbe5e3f783aed4ac9eafe42314905",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            }
+        },
+        "/api/hotels/{id}": {
+            "get": {
+                "tags": [
+                    "Hotels"
+                ],
+                "summary": "Get Hotels By Id",
+                "operationId": "ad3ac3563007ae0bc831d0bf25a8829e",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id for hotel",
+                        "required": true
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number for pagination (default is 1)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Hotels",
+            "description": "API Endpoints for Hotels"
+        }
+    ]
+}
