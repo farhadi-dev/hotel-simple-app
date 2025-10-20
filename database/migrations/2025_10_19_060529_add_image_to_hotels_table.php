@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::table('hotels', function (Blueprint $table) {
             $table->string('image')->after('address')->nullable();
+            $table->softDeletes();
         });
     }
 

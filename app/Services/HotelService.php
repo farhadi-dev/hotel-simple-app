@@ -17,7 +17,7 @@ class HotelService
     {
         return $this->hotel->all();
     }
-    public function getHotelById($id, $perPage = 6, $page = 1)
+    public function getById($id, $perPage = 6, $page = 1)
     {
         return $this->hotel->find($id, $perPage, $page);
     }

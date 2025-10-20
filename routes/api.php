@@ -14,8 +14,8 @@ Route::group([
 
 ], function ($router) {
 
-    Route::post('logout',[AuthController::class, 'logout']);
-    Route::post('refresh',[AuthController::class, 'refresh']);
+    Route::post('logout', [AuthController::class, 'logout']);
+    Route::post('refresh', [AuthController::class, 'refresh']);
     Route::post('me', [AuthController::class, 'me']);
 
 });
@@ -23,35 +23,29 @@ Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
 
 
-/**
- * @OA\Info(
- *      version="1.0.0",
- *      title="Hotel API Documentation",
- *      description="API documentation for the hotel app"
- * )
- */
-
-Route::prefix('hotel')->group(function () {
-    Route::post('/create', [HotelController::class, 'createHotel']);
-    Route::put('/{id}', [HotelController::class, 'updateHotel']);
-    Route::delete('/{id}', [HotelController::class, 'deleteHotel']);
+Route::prefix('hotels')->group(function () {
+    Route::get('', [HotelController::class, 'show']);
+    Route::post('', [HotelController::class, 'createHotel']);
+    Route::get('{id}', [HotelController::class, 'getHotelById']);
+    Route::put('{id}', [HotelController::class, 'updateHotel']);
+    Route::delete('{id}', [HotelController::class, 'deleteHotel']);
+    Route::get('{id}/rooms', [RoomController::class, 'getRoomsByHotelId']);
 });
-Route::get('hotels/all', [HotelController::class, 'show']);
-Route::get('hotels/{id}', [HotelController::class, 'getHotelById']);
 
 Route::prefix('rooms')->group(function () {
-    Route::get('/hotel/{id}', [RoomController::class, 'getRoomsByHotelId']);
-    Route::post('/', [RoomController::class, 'create']);
-    Route::put('/{id}', [RoomController::class, 'update']);
-    Route::delete('/{id}', [RoomController::class, 'delete']);
+    Route::get('', [RoomController::class, 'getAllRooms']);
+    Route::post('', [RoomController::class, 'create']);
+    Route::get('{id}', [RoomController::class, 'getRoomById']);
+    Route::put('{id}', [RoomController::class, 'update']);
+    Route::delete('{id}', [RoomController::class, 'delete']);
 });
-Route::get('/', [RoomController::class, 'getAllRooms']);
-Route::get('/{id}', [RoomController::class, 'getRoomById']);
+
+// Get user's reservations: /users/{id}/reservations
+// Get Logged-in user's reservations: /users/reservations
 
 
-
-Route::prefix('reserve')->group(function () {
-    Route::get('/all', [ReservationController::class, 'allReservations']);
+Route::prefix('reserves')->group(function () {
+    Route::get('', [ReservationController::class, 'allReservations']);
     Route::get('/user/{id}', [ReservationController::class, 'findByUserId']);
     Route::get('/room/{id}', [ReservationController::class, 'findByRoom']);
     Route::post('/', [ReservationController::class, 'createReservation']);

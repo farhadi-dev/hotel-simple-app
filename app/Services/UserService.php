@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\DTO\AuthRegisterDTO;
+use App\Models\Hotel;
 use App\Repositories\UserRepository;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
@@ -13,6 +14,22 @@ class UserService
     public function __construct(UserRepository $userRepository)
     {
         $this->userRepository = $userRepository;
+    }
+
+    /**
+     * Get the token array structure.
+     *
+     * @param string $token
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public static function respondWithToken($token)
+    {
+        return response()->json([
+            'access_token' => $token,
+            'token_type' => 'bearer',
+            'expires_in' => auth()->factory()->getTTL() * 60
+        ]);
     }
 
     public function getAllUsersWithReservation()

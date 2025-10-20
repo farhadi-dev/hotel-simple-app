@@ -4,22 +4,19 @@ namespace App\Http\Controllers;
 
 use App\DTO\AuthRegisterDTO;
 use App\Http\Requests\AuthRegisterRequest;
-use App\Models\User;
 use App\Services\UserService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Auth;
+
 class AuthController extends Controller
 {
 
     /**
      * Get a JWT via given credentials.
      *
-     * @return \Illuminate\Http\JsonResponse
-     *
-     */
-    /**
+     * @param AuthRegisterRequest $request
+     * @param UserService $userService
+     * @return JsonResponse
      * @SWG\Post(
      *     path="/register",
      *     summary="register User",
@@ -28,8 +25,7 @@ class AuthController extends Controller
      *     @SWG\Response(response=400, description="Invalid request")
      * )
      */
-
-    public function register(AuthRegisterRequest $request, UserService  $userService)
+    public function register(AuthRegisterRequest $request, UserService $userService): JsonResponse
     {
         $data = $request->validated();
 
@@ -40,7 +36,14 @@ class AuthController extends Controller
             'user' => $user
         ], 201);
     }
-    public function login(Request $request)
+
+    /**
+     * Login the user
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function login(Request $request): JsonResponse
     {
         $credentials = $request->only('phone', 'password');
 
@@ -48,15 +51,15 @@ class AuthController extends Controller
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 
-        return $this->respondWithToken($token);
+        return UserService::respondWithToken($token);
     }
 
     /**
      * Get the authenticated User.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function me()
+    public function me(): JsonResponse
     {
         return response()->json(auth()->user());
     }
@@ -64,9 +67,9 @@ class AuthController extends Controller
     /**
      * Log the user out (Invalidate the token).
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function logout()
+    public function logout(): JsonResponse
     {
         auth()->logout();
 
@@ -76,26 +79,11 @@ class AuthController extends Controller
     /**
      * Refresh a token.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function refresh()
+    public function refresh(): JsonResponse
     {
-        return $this->respondWithToken(auth()->refresh());
+        return UserService::respondWithToken(auth()->refresh());
     }
 
-    /**
-     * Get the token array structure.
-     *
-     * @param string $token
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    protected function respondWithToken($token)
-    {
-        return response()->json([
-            'access_token' => $token,
-            'token_type' => 'bearer',
-            'expires_in' => auth()->factory()->getTTL() * 60
-        ]);
-    }
 }

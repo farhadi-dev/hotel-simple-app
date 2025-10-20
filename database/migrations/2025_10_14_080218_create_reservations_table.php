@@ -15,7 +15,8 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('room_id');
-            $table->date('date');
+            $table->date('check_in');
+            $table->date('check_out');
             $table->boolean('status')->default(true);
             $table->timestamps();
 

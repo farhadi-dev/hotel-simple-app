@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\DTO\CreateHotelDTO;
 use App\Http\Requests\CreateHotelRequest;
+use App\Http\Resources\HotelResource;
 use App\Services\HotelService;
 use Illuminate\Http\Request;
 
@@ -17,7 +18,7 @@ class HotelController extends Controller
 {
     /**
      * @OA\Get(
-     *     path="/api/hotels/all",
+     *     path="/api/hotels",
      *     tags={"Hotels"},
      *     summary="Get list of hotels",
      *     @OA\Response(
@@ -26,9 +27,11 @@ class HotelController extends Controller
      *     )
      * )
      */
-    public function show(HotelService $hotelService)
+    public function index(HotelService $hotelService)
     {
-        return response()->json($hotelService->getAllHotels());
+        $hotels = $hotelService->getAllHotels();
+
+        return HotelResource::collection($hotels);
     }
     /**
      * @OA\Get(
@@ -54,11 +57,11 @@ class HotelController extends Controller
      *     )
      * )
      */
-    public function getHotelById(Request $request, HotelService $hotelService, $id)
+    public function show(Request $request, HotelService $hotelService, $id)
     {
         $page = $request->query('page', 1);
         $perPage = 6;
-        $hotel = $hotelService->getHotelById($id, $perPage, $page);
+        $hotel = $hotelService->getById($id, $perPage, $page);
         return response()->json($hotel);
     }
 
@@ -75,14 +78,14 @@ class HotelController extends Controller
 
     public function updateHotel(HotelService $hotelService, Request $request, $id)
     {
-        $hotel = $hotelService->getHotelById($id);
+        $hotel = $hotelService->updateHotel($id);
         $hotel->update($request->all());
         return response()->json($hotel, 200);
     }
 
     public function deleteHotel(HotelService $hotelService, $id)
     {
-        $hotel = $hotelService->getHotelById($id);
+        $hotel = $hotelService->getById($id);
         $hotel->delete();
         return response()->json(null, 204);
     }
