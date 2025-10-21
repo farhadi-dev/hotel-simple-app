@@ -1,32 +1,13 @@
 <?php
+
 namespace App\Repositories;
 
 use App\Models\User;
 
-class UserRepository
+class UserRepository extends BaseRepository
 {
-    public function all()
+    public function __construct(User $model)
     {
-        return User::query()->with('reservations')->get();
-    }
-    public function find($id)
-    {
-        return User::query()->with('reservations')->findOrFail($id);
-    }
-    public function create(array $data)
-    {
-        return User::query()->create($data);
-    }
-    public function update(array $data, $id)
-    {
-        $user = User::query()->findOrFail($id);
-        $user->update($data);
-        return $user;
-    }
-    public function delete($id)
-    {
-        $user = User::query()->findOrFail($id);
-        $user->delete();
-        return $user;
+        parent::__construct($model);
     }
 }

@@ -3,49 +3,22 @@
 namespace App\Repositories;
 
 use App\Models\Reservation;
-use App\Models\Room;
+use Illuminate\Database\Eloquent\Collection;
 
-class ReservationRepository
+class ReservationRepository extends BaseRepository
 {
-    public function all()
+    public function __construct(Reservation $model)
     {
-        return Reservation::query()->with(['user', 'room.hotel'])->get();
+        parent::__construct($model);
     }
 
-    public function find($id)
-    {
-        return Reservation::query()->findOrFail($id);
-    }
-
-    public function findByUser($userId)
+    public function findByUser($userId): Collection
     {
         return Reservation::query()->where('user_id', $userId)->with('room.hotel')->get();
     }
 
-    public function findByRoom($roomId)
+    public function findByRoom($roomId): Collection
     {
-        return Reservation::query()->where('room_id', $roomId)->get();
-    }
-
-    public function create(array $data)
-    {
-        if (!isset($data['date'])) {
-            $data['date'] = now()->toDateString(); // auto-set today
-        }
-        return Reservation::query()->create($data);
-    }
-
-    public function update(array $data, $id)
-    {
-        $reservation = Reservation::query()->findOrFail($id);
-        $reservation->update($data);
-        return $reservation;
-    }
-
-    public function delete($id)
-    {
-        $reservation = Reservation::query()->findOrFail($id);
-        $reservation->delete();
-        return $reservation;
+        return Reservation::query()->where('room_id', $roomId)->with('room.hotel')->get();
     }
 }

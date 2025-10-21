@@ -2,14 +2,14 @@
 
 namespace App\Http\Resources;
 
-use App\Models\Hotel;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
- * @mixin Hotel
+ * @mixin User
  */
-class HotelResource extends JsonResource
+class UserResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -19,10 +19,11 @@ class HotelResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id' => $this->id,
-            'name' => $this->name,
-            'address' => $this->address,
-            'rooms' =>RoomResource::collection($this->whenLoaded('rooms')),
+            'id'=>$this->id,
+            'name'=>$this->name,
+            'family'=>$this->family,
+            'phone'=>$this->phone,
+            'is_admin'=>$this->is_admin,
         ];
     }
 }

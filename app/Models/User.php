@@ -6,15 +6,24 @@ namespace App\Models;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasName;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
+/**
+ * @property $id
+ * @property $name
+ * @property $family
+ * @property $phone
+ * @property $is_admin
+ * @property $created_at
+ * @property $updated_at
+ */
 class User extends Authenticatable implements JWTSubject, FilamentUser, HasName
 {
 
-    use HasFactory, Notifiable;
-
+    use HasFactory, Notifiable, SoftDeletes;
     protected $fillable = [
         'name',
         'family',

@@ -2,14 +2,14 @@
 
 namespace App\Http\Resources;
 
-use App\Models\Hotel;
+use App\Models\Room;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
- * @mixin Hotel
+ * @mixin Room
  */
-class HotelResource extends JsonResource
+class RoomResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -20,9 +20,10 @@ class HotelResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'name' => $this->name,
-            'address' => $this->address,
-            'rooms' =>RoomResource::collection($this->whenLoaded('rooms')),
+            'room_type' => $this->room_type,
+            'room_number' => $this->room_number,
+            'floor_number' => $this->floor_number,
+            'hotel_id' => $this->hotel_id,
         ];
     }
 }

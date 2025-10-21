@@ -3,40 +3,20 @@
 namespace App\Repositories;
 
 use App\Models\Room;
+use Illuminate\Pagination\LengthAwarePaginator;
 
-class RoomRepository
+class RoomRepository extends BaseRepository
 {
-    public function all()
+    public function __construct(Room $model)
     {
-        return Room::query()->with('hotel')->get();
+        parent::__construct($model);
     }
 
-    public function find($id)
+    public function getByHotelId(int $hotelId, int $perPage = 10): LengthAwarePaginator
     {
-        return Room::query()->findOrFail($id);
-    }
-
-    public function findByHotelId($id, $page = 10)
-    {
-        return Room::query()->where('hotel_id', $id)->orderByDesc('reservation_status')->paginate($page);
-    }
-
-    public function create(array $data)
-    {
-        return Room::query()->create($data);
-    }
-
-    public function update(array $data, $id)
-    {
-        $room = Room::query()->findOrFail($id);
-        $room->update($data);
-        return $room;
-    }
-
-    public function delete($id)
-    {
-        $room = Room::query()->findOrFail($id);
-        $room->delete();
-        return $room;
+        return $this->model->newQuery()
+            ->where('hotel_id', $hotelId)
+            ->orderByDesc('reservation_status')
+            ->paginate($perPage);
     }
 }

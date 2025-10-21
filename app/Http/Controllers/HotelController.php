@@ -3,10 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\DTO\CreateHotelDTO;
+use App\DTO\UpdateHotelDTO;
 use App\Http\Requests\CreateHotelRequest;
+use App\Http\Requests\UpdateHotelRequest;
 use App\Http\Resources\HotelResource;
 use App\Services\HotelService;
-use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 /**
  * @OA\Tag(
@@ -27,12 +30,13 @@ class HotelController extends Controller
      *     )
      * )
      */
-    public function index(HotelService $hotelService)
+    public function index(HotelService $hotelService): AnonymousResourceCollection
     {
-        $hotels = $hotelService->getAllHotels();
+        $hotels = $hotelService->getAll();
 
         return HotelResource::collection($hotels);
     }
+
     /**
      * @OA\Get(
      *     path="/api/hotels/{id}",
@@ -57,36 +61,33 @@ class HotelController extends Controller
      *     )
      * )
      */
-    public function show(Request $request, HotelService $hotelService, $id)
+    public function show(HotelService $hotelService, $id): HotelResource
     {
-        $page = $request->query('page', 1);
-        $perPage = 6;
-        $hotel = $hotelService->getById($id, $perPage, $page);
-        return response()->json($hotel);
+        $hotel = $hotelService->getById($id);
+        return new HotelResource($hotel);
     }
 
-    public function createHotel(HotelService $hotelService, CreateHotelRequest $request)
+    public function store(HotelService $hotelService, CreateHotelRequest $request): HotelResource
     {
         $data = $request->validated();
         if ($request->hasFile('image')) {
             $imagePath = $request->file('image')->store('hotels', 'public');
             $data['image'] = $imagePath;
         }
-        $hotel = $hotelService->createHotel(CreateHotelDTO::fromRequest($data));
-        return response()->json($hotel, 201);
+        $hotel = $hotelService->create(CreateHotelDTO::fromRequest($data));
+        return new HotelResource($hotel);
     }
 
-    public function updateHotel(HotelService $hotelService, Request $request, $id)
+    public function update(HotelService $hotelService, UpdateHotelRequest $request, $id):AnonymousResourceCollection
     {
-        $hotel = $hotelService->updateHotel($id);
-        $hotel->update($request->all());
-        return response()->json($hotel, 200);
+        $data = $request->validated();
+        $hotel = $hotelService->update($id, UpdateHotelDTO::fromRequest($data));
+        return HotelResource::collection($hotel);
     }
 
-    public function deleteHotel(HotelService $hotelService, $id)
+    public function destroy(HotelService $hotelService, $id): JsonResponse
     {
-        $hotel = $hotelService->getById($id);
-        $hotel->delete();
-        return response()->json(null, 204);
+        $hotelService->delete($id);
+        return response()->json(['message' => 'Room deleted successfully.'], 200);
     }
 }

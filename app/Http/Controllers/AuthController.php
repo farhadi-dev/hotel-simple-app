@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\DTO\AuthRegisterDTO;
 use App\Http\Requests\AuthRegisterRequest;
+use App\Http\Resources\UserResource;
 use App\Services\UserService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -33,7 +34,7 @@ class AuthController extends Controller
 
         return response()->json([
             'message' => 'User registered successfully!',
-            'user' => $user
+            'user' => UserResource::collection($user)
         ], 201);
     }
 

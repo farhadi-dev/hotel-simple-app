@@ -13,31 +13,31 @@ class ReservationService
         $this->reservation = $reservationRepository;
     }
 
-    public function getAllReservations()
+    public function getAll()
     {
-        return $this->reservation->all();
+        return $this->reservation->getAll();
     }
-    public function getReservationById($id)
+    public function getById($id)
     {
-        return $this->reservation->find($id);
+        return $this->reservation->getById($id);
     }
-    public function getReservationByUser($userId)
+    public function getByUser($userId)
     {
         return $this->reservation->findByUser($userId)->load('room.hotel');
     }
-    public function getReservationByRoom($roomId)
+    public function getByRoom($roomId)
     {
         return $this->reservation->findByRoom($roomId);
     }
-    public function createReservation($data)
+    public function create($data)
     {
         return $this->reservation->create($data);
     }
-    public function updateReservation($id, $data)
+    public function update($id, $data)
     {
         return $this->reservation->update($id, $data);
     }
-    public function deleteReservation($id)
+    public function delete($id)
     {
         return $this->reservation->delete($id);
     }

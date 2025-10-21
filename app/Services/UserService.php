@@ -34,11 +34,11 @@ class UserService
 
     public function getAllUsersWithReservation()
     {
-        return $this->userRepository->all();
+        return $this->userRepository->getAll();
     }
     public function getUserById($id)
     {
-        return $this->userRepository->find($id);
+        return $this->userRepository->getById($id);
     }
     public function createUser(AuthRegisterDTO $dto)
     {

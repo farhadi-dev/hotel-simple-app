@@ -2,50 +2,60 @@
 
 namespace App\Http\Controllers;
 
+use App\DTO\CreateReservationDTO;
+use App\DTO\UpdateReservationDTO;
+use App\Http\Requests\CreateReservationRequest;
+use App\Http\Requests\UpdateReservation;
+use App\Http\Resources\ReservationResource;
 use App\Repositories\ReservationRepository;
 use App\Services\ReservationService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class ReservationController extends Controller
 {
-    public function allReservations(ReservationService $reservationService)
+    public function index(ReservationService $reservationService): AnonymousResourceCollection
     {
-        $reservations = $reservationService->getAllReservations();
-        return response()->json($reservations);
+        $reservations = $reservationService->getAll();
+        return ReservationResource::collection($reservations);
     }
 
-    public function findReservationById(ReservationService $reservationService, $id)
+    public function show(ReservationService $reservationService, $id): ReservationResource
     {
-        $reservation = $reservationService->getReservationById($id);
-        return response()->json($reservation);
+        $reservation = $reservationService->getById($id);
+        return new ReservationResource($reservation);
     }
 
-    public function findByUserId(ReservationService $reservationService, $id)
+    public function byUser(ReservationService $reservationService, $id): ReservationResource
     {
-        $reservation = $reservationService->getReservationByUser($id);
-        return response()->json($reservation);
+        $reservation = $reservationService->getByUser($id);
+        return new ReservationResource($reservation);
     }
 
-    public function findByRoom(ReservationService $reservationService, $id)
+    public function byRoom(ReservationService $reservationService, $id): ReservationResource
     {
-        $reservation = $reservationService->getReservationByRoom($id);
-        return response()->json($reservation);
+        $reservation = $reservationService->getByRoom($id);
+        return new ReservationResource($reservation);
     }
 
-    public function createReservation(Request $request, ReservationService $reservationService)
+    public function store(CreateReservationRequest $request, ReservationService $reservationService): AnonymousResourceCollection
     {
-        $reservation = $reservationService->createReservation($request->all());
-        return response()->json($reservation, 201);
+        $data = $request->validated();
+        $reservation = $reservationService->create(CreateReservationDTO::fromRequest($data));
+        return ReservationResource::collection($reservation);
     }
 
-    public function updateReservation(Request $request, ReservationService $reservationService, $id)
+    public function update($id, UpdateReservation $request, ReservationService $reservationService): AnonymousResourceCollection
     {
-        $reservation = $reservationService->updateReservation($request->all(), $id);
-        return response()->json($reservation, 200);
+        $data = $request->validated();
+        $reservation = $reservationService->update($id, UpdateReservationDTO::fromRequest($data));
+        return ReservationResource::collection($reservation);
     }
-    public function deleteReservation(ReservationService $reservationService, $id)
+
+    public function destroy(ReservationService $reservationService, $id): JsonResponse
     {
-        $reservation = $reservationService->deleteReservation($id);
-        return response()->json($reservation, 200);
+        $reservationService->delete($id);
+        return response()->json(['message' => 'Room deleted successfully.'], 200);
     }
 }

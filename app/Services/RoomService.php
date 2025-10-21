@@ -3,7 +3,12 @@
 namespace App\Services;
 
 use App\DTO\CreateRoomDTO;
+use App\DTO\UpdateRoomDTO;
+use App\Models\Room;
 use App\Repositories\RoomRepository;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class RoomService
 {
@@ -12,19 +17,19 @@ class RoomService
     {
         $this->room = $roomRepository;
     }
-    public function getAllRooms()
+    public function getAll(): EloquentCollection
     {
-        return $this->room->all();
+        return $this->room->getAll();
     }
-    public function getRoomById($id)
+    public function getById($id): EloquentCollection
     {
-        return $this->room->find($id);
+        return $this->room->getById($id);
     }
-    public function getRoomsByHotelId($id, $page)
+    public function getByHotelId($id, $page): LengthAwarePaginator
     {
-        return $this->room->findByHotelId($id, $page);
+        return $this->room->getByHotelId($id, $page);
     }
-    public function createRoom(CreateRoomDTO $createRoomDTO)
+    public function create(CreateRoomDTO $createRoomDTO): Model
     {
         return $this->room->create([
             'room_number' => $createRoomDTO->room_number,
@@ -34,11 +39,17 @@ class RoomService
             'reservation_status'=> $createRoomDTO->reservation_status,
         ]);
     }
-    public function updateRoom($data, $id)
+    public function update($id, UpdateRoomDTO $roomDTO): Model
     {
-        return $this->room->update($data, $id);
+        return $this->room->update($id, [
+            'room_number' => $roomDTO->room_number,
+            'room_type' => $roomDTO->room_type,
+            'floor_number' => $roomDTO->floor_number,
+            'hotel_id' => $roomDTO->hotel_id,
+            'reservation_status'=> $roomDTO->reservation_status,
+        ]);
     }
-    public function deleteRoom($id)
+    public function delete($id): Model
     {
         return $this->room->delete($id);
     }
