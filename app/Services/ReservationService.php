@@ -2,8 +2,12 @@
 
 namespace App\Services;
 
+use App\DTO\CreateReservationDTO;
+use App\DTO\UpdateReservationDTO;
 use App\Models\Reservation;
 use App\Repositories\ReservationRepository;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 
 class ReservationService
 {
@@ -13,31 +17,41 @@ class ReservationService
         $this->reservation = $reservationRepository;
     }
 
-    public function getAll()
+    public function getAll(): Collection
     {
         return $this->reservation->getAll();
     }
-    public function getById($id)
+    public function getById($id): Collection
     {
         return $this->reservation->getById($id);
     }
-    public function getByUser($userId)
+    public function getByUser($userId): Collection
     {
         return $this->reservation->findByUser($userId)->load('room.hotel');
     }
-    public function getByRoom($roomId)
+    public function getByRoom($roomId): Collection
     {
         return $this->reservation->findByRoom($roomId);
     }
-    public function create($data)
+    public function create(CreateReservationDTO $createReservationDTO): Model
     {
-        return $this->reservation->create($data);
+        return $this->reservation->create([
+            'user_id'=>$createReservationDTO->user_id,
+            'room_id'=>$createReservationDTO->room_id,
+            'check_in'=>$createReservationDTO->check_in,
+            'check_out'=>$createReservationDTO->check_out,
+        ]);
     }
-    public function update($id, $data)
+    public function update($id, UpdateReservationDTO $updateReservationDTO): Model
     {
-        return $this->reservation->update($id, $data);
+        return $this->reservation->update($id, [
+            'user_id'=>$updateReservationDTO->user_id,
+            'room_id'=>$updateReservationDTO->room_id,
+            'check_in'=>$updateReservationDTO->check_in,
+            'check_out'=>$updateReservationDTO->check_out,
+        ]);
     }
-    public function delete($id)
+    public function delete($id): Model
     {
         return $this->reservation->delete($id);
     }
